@@ -1,0 +1,103 @@
+<!-- Saem Jeon, sj846@drexel.edu
+CS530: DUI, Assignment 1 -->
+{% extends 'base.html' %}
+{% set active = "Bikes" %}
+
+{% block title %}
+Rent a bike
+{% endblock %}
+
+{% block content %}
+
+<section class="jumbotron">
+	<div class="text-left">
+		<h1 class="jumbotron-heading">Rent a Bike</h1>
+		<p class="lead text-muted">Please select a rental from our available bikes below!</p>
+		<p>
+			<!-- Create a table with list of bikes -->
+			<table class="table">
+				<!-- Create a table header -->
+				<thead>
+					<tr>
+						<th scope="col">Image</th>
+						<th scope="col">Name</th>
+						<th scope="col">Available</th>
+						<th scope="col">&nbsp;</th>
+					</tr>
+				</thead>
+				<!-- Create rows with information of bikes -->
+				<tbody id="bikelist">
+					<script type="module">
+						// Create an array to keep the available bikes
+						var bikeCount = new Array();
+						var i;
+						// Initialize the number of bikes available
+						function setBikeCount(data) {
+							for (var i = 0; i < data["content"].length; i++) {
+								let bike = data["content"][i];
+								// Add the number of bikes to bikeCount array
+								bikeCount[i] = bike.available;
+							};
+							// Load the page with a list of bikes
+							loadBikes(data)
+						};
+
+						// Create a list of bikes 
+						function loadBikes(data) {
+							// Empty the rows of bike list
+							$('#bikelist').empty();
+							for (var i = 0; i < data["content"].length; i++) {
+								let bike = data["content"][i];
+								// Add basic row structure with three columns
+								var row = $(`
+									<tr>
+										<td><img class="bike-img" src="img/bikes/${ bike.image }"/></td>
+										<td>${ bike.name }</td>
+										<td>${ bikeCount[i] }</td>
+									</tr>
+								`);
+
+								// If bike is not available, apply rented class so that the row is greyed out
+								if (bikeCount[i] == 0) {
+									row.addClass('rented');
+									row.append($('<td>'))
+								} else {
+									// If bikes are still available, add "Rent" button
+									row.append(
+										$('<td>').append(
+											$('<a>').addClass("btn my-2").text("Rent")
+												// If "Rent" button is clikced update the number of available bikes
+												.click(function () {
+													updateBikeCount(bike.id, data)
+												})
+										)
+									)
+								}
+								// Add each row to the table
+								$('#bikelist').last().append(row)
+							};
+						};
+
+						// Function to update the bike count
+						function updateBikeCount(id, data) {
+							// Get the index of each bike
+							var idx = parseInt(id.slice(1, id.length)) - 1
+							bikeCount[idx] = bikeCount[idx] - 1
+							// Load the page with the updated bike count
+							loadBikes(data)
+						}
+
+						// Get the bike list from data.txt
+						$(function () {
+							$.get("/api/data", function (data) {
+								setBikeCount(data);
+							});;
+						});
+					</script>
+				</tbody>
+			</table>
+		</p>
+	</div>
+</section>
+
+{% endblock %}

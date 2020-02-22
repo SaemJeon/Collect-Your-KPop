@@ -1,0 +1,61 @@
+/* Saem Jeon, sj846@drexel.edu
+CS530: DUI, Assignment 1 */
+
+body {
+	font-family: "Arial";
+	font-size: 1rem;
+	background: #fff;
+}
+
+header {
+	background-color: #07294d;
+}
+
+.btn {
+	/* background: white;
+	border-color: blue;
+	color: black; */
+}
+
+.btn:hover {
+	/* background: #608C59;
+	border-color: #406C39;
+	color: black; */
+}
+
+.navbar-expand-md .navbar-nav .nav-link {
+	padding-left: 1rem;
+	padding-right: 1rem;
+	color: #ffc600;
+}
+
+.content {
+	padding: 2rem 1.5rem;
+}
+
+.jumbotron {
+	padding: 1.5rem;
+	background: 0;
+}
+
+.jumbotron img {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.active {
+	color: white;
+}
+
+.bike-img {
+	max-width: 100px;
+	box-shadow: none !important;
+}
+
+.rented {
+	opacity: 0.25;
+}
+
+.my-2 {
+	background-color: grey !important;
+	color: white !important;
+}

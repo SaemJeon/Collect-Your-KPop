@@ -1,0 +1,112 @@
+<!-- Saem Jeon, sj846@drexel.edu
+CS530: DUI, Project 1 -->
+
+{% extends 'base.html' %}
+{% set active = "Home" %}
+
+{% block title %}
+Log In
+{% endblock %}
+
+{% block content %}
+
+<h1>Create User</h1>
+
+<p>
+  Please specify a new username and password below.
+</p>
+
+{% if message %}
+<div class="alert alert-danger">
+  {{ message }}
+</div>
+{% endif %}
+
+<form method="POST" action="/create_account" class="pt-3">
+  <div class="form-group row">
+    <label for="name" class="col-3 col-form-label">Your Name</label>
+    <div class="col-4">
+      <input class="form-control" type="text" name="name">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="email" class="col-3 col-form-label">Email</label>
+    <div class="col-4">
+      <input class="form-control" type="email" value="collectyour@kpop.com" name="email">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="password" class="col-3 col-form-label">Password</label>
+    <div class="col-4">
+      <input class="form-control" type="password" name="password">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="dob" class="col-3 col-form-label">Date of Birth</label>
+    <div class="col-4">
+      <input class="form-control" type="date" value="2000-02-18" name="dob">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="artist" class="col-3 col-form-label">Choose your favorite K-Pop artist</label>
+    <div class="col-4">
+      <select class="form-control" name="artist" id="artist">
+      </select>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="member" class="col-3 col-form-label">Choose your favorite member</label>
+    <div class="col-4">
+      <select class="form-control" name="member" id="member">
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-2"></div>
+    <div class="col-4">
+      <button type="submit" class="btn btn-outline-info">Submit</button>
+    </div>
+  </div>
+  <script>
+    screen_load()
+    $("#artist").change(get_members)
+    // Load the screen and get all the info
+    function screen_load() {
+      get_groups()
+      get_members()
+    }
+
+    function get_groups() {
+      $.ajax({
+        url: "/api/get_groups", 
+        type: "get",
+        async: false,
+        success: function (groups) {
+        $('#artist').empty();
+        var group_list = $("#artist")
+        $.each(groups, function (key, value) {
+          group_list
+            .append($("<option></option>")
+              .attr("value", value[0])
+              .text(value[1]));
+        });
+      }})
+    }
+
+    function get_members() {
+      var group_id = $("#artist").val()
+      $.get("/api/get_members/" + String(group_id), function (members) {
+        $("#member").empty()
+        var member_list = $("#member")
+        $.each(members, function (key, value) {
+          member_list
+            .append($("<option></option>")
+              .attr("value", value[0])
+              .text(value[1]));
+        });
+      });;
+    }
+  </script>
+</form>
+
+{% endblock %}
