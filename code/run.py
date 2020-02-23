@@ -76,6 +76,23 @@ def create_account():
 			msg = "Please enter all the information"
 	return render_template('create_account.html', message=msg)
 
+# Handle Edit My Pop page
+@app.route('/edit_my_pop', methods=['GET', 'POST'])
+def edit_my_pop():
+	if request.method == 'POST':
+		artist = request.form['artist']
+		member = request.form['member']
+		city = request.form['city']
+		state = request.form['state']
+		zipcode = request.form['zipcode']
+		distance = request.form['distance']
+		language = request.form['language']
+		user = session['user']
+		if artist and member and city and state and zipcode and language:
+			get_db().update_profile(artist, member, city, state, zipcode, distance, language, user['user_id'])
+			return redirect('my_collection')
+	return render_template('edit_my_pop.html')
+
 # Handle My Collection page
 @app.route('/my_collection')
 def my_collection():
@@ -129,6 +146,13 @@ def api_groups():
 def api_members(group_id):
 	members = get_db().get_members(group_id)
 	return members
+
+@app.route('/api/get_my_pop')
+def api_my_pop():
+	user = session['user']
+	pop = get_db().get_my_pop(user['user_id'])
+	print(pop)
+	return pop
 
 if __name__ == "__main__":
 	app.run(host='127.0.0.1', port=8080, debug=True)

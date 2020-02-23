@@ -12,30 +12,79 @@ My Pop
 
 
 <section class="jumbotron">
-  <div>
-    <h1 class="jumbotron-heading">My Pop</h1>
-    <a href="/edit_my_pop">
-      <i href="/edit_my_pop" class="far fa-edit fa-3x"></i>
-    </a>
-    <div class="form-group row">
-      <label for="artist" class="col-3 col-form-label">My Artist</label>
-      <div class="col-4">
-        <select class="form-control" disabled class="form-control-plaintext" name="artist" value="3">
-          <option selected></option>
-          <option value="1">TWICE</option>
-          <option value="2">BTS</option>
-          <option value="3">AKMU</option>
-        </select>
-      </div>
-      <div class="form-group row">
-        <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
-        <div class="col-sm-10">
-          <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="email@example.com">
-        </div>
-      </div>
-    </div>
-    
-  </div>
+	<div>
+		<h1 class="jumbotron-heading">My Pop</h1>
+		<a href="/edit_my_pop">
+			<i href="/edit_my_pop" class="far fa-edit fa-3x"></i>
+		</a>
+		<ul>
+			<li>
+				<div class="form-group row">
+					<label for="artist" class="col-sm-3 col-form-label">My Artist</label>
+					<div class="col-sm-6" name="artist" id="artist">
+					</div>
+				</div>
+			</li>
+
+			<li>
+				<div class="form-group row">
+					<label for="member" class="col-sm-3 col-form-label">My Favorite Member</label>
+					<div class="col-sm-6" name="member" id="member">
+					</div>
+				</div>
+			</li>
+
+			<li>
+				<div class="form-group row">
+					<label for="address" class="col-sm-3 col-form-label">Address</label>
+					<div class="col-sm-6" name="address" id="address">
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="form-group row">
+					<label for="distance" class="col-sm-3 col-form-label">Preferred Distance</label>
+					<div class="col-sm-6" name="distance" id="distance">
+					</div>
+				</div>
+			</li>
+
+			<li>
+				<div class="form-group row">
+					<label for="language" class="col-sm-3 col-form-label">Preferred Language</label>
+					<div class="col-sm-6" name="language" id="language">
+					</div>
+				</div>
+			</li>
+		</ul>
+
+	</div>
+	<script>
+		screen_load()
+		// Load the screen and get all the info
+		function screen_load() {
+			var profile = get_profile()
+		}
+
+		function get_profile() {
+			var profile = null;
+			$.ajax({
+				url: "/api/get_my_pop",
+				type: "get",
+				async: false,
+				success: function (data) {
+					profile = data
+					$("#artist").append("<p class='form-control-plaintext'>" + profile['artist'] + "</p>")
+					$("#member").append("<p class='form-control-plaintext'>" + profile['member'] + "</p>")
+					var address = profile['city'] + ", " + profile['state'] + " " + profile['zipcode']
+					$("#address").append("<p class='form-control-plaintext'>" + address + "</p>")
+					$("#distance").append("<p class='form-control-plaintext'>" + profile['distance'] + " miles" + "</p>")
+					$("#language").append("<p class='form-control-plaintext'>" + profile['language'] + "</p>")
+				}
+			});;
+			return profile
+		}
+	</script>
 </section>
 
 {% endblock %}

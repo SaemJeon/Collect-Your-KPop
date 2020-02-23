@@ -50,7 +50,12 @@ class Database:
 
 	def create_account(self, name, email, encrypted_password, dob, artist, member):
 		self.execute('INSERT INTO users (name, email, encrypted_password, dob, artist, member) VALUES (?, ?, ?, ?, ?, ?)',
-		 [name, email, encrypted_password, dob, artist, member])
+		[name, email, encrypted_password, dob, artist, member])
+
+	def update_profile(self, artist, member, city, state, zipcode, distance, language, user_id):
+		#self.execute('INSERT INTO users (artist, member, city, state, zipcode, language) VALUES (?, ?, ?, ?, ?, ?) WHERE user_id=?', 
+		self.execute('UPDATE users SET artist=?, member=?, city=?, state=?, zipcode=?, distance=?, language=? WHERE user_id=?',
+		[artist, member, city, state, zipcode, distance, language, user_id])
 
 	# Return User Info
 	def get_user(self, email):
@@ -74,10 +79,11 @@ class Database:
 			return {
 				'artist': d[5],
 				'member': d[6],
-				'location': d[7],
-				'distance': d[8],
-				'phone': d[9],
-				'language': d[10]
+				'city': d[7],
+				'state': d[8],
+				'zipcode': d[9],
+				'distance': d[10],
+				'language': d[11]
 			}
 		else:
 			return None
@@ -101,6 +107,30 @@ class Database:
 			for i in range(len(data)):
 				members[i] = data[i]
 			return members
+		else:
+			return None
+
+	# Return favorite artist and member of user
+	def get_my_pop(self, user_id):
+		data = self.select('SELECT * FROM users where user_id=?', [user_id])
+		if data:
+			d = data[0]
+			artist = self.select('SELECT name from groups where group_id=?', [d[5]])
+			member = self.select('SELECT name from members where member_id=?', [d[6]])
+			if d[11] == "EN":
+				lang = "English"
+			else:
+				lang = "Korean"
+
+			return {
+				'artist': artist,
+				'member': member,
+				'city': d[7],
+				'state': d[8],
+				'zipcode': d[9],
+				'distance': d[10],
+				'language': lang
+			}
 		else:
 			return None
 

@@ -8,9 +8,10 @@ CREATE TABLE users (
     dob TEXT,
     artist TEXT, 
     member TEXT,
-    location TEXT,
+    city TEXT,
+    state TEXT,
+    zipcode TEXT,
     distance TEXT,
-    phone TEXT,
     language TEXT
 );
 
