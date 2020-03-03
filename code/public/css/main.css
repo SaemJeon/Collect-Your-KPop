@@ -8,7 +8,7 @@ body {
 }
 
 header {
-	background-color: #07294d;
+	background-color: rgb(0, 55, 100);
 }
 
 .btn {
@@ -26,7 +26,7 @@ header {
 .navbar-expand-md .navbar-nav .nav-link {
 	padding-left: 1rem;
 	padding-right: 1rem;
-	color: #ffc600;
+	color: white;
 }
 
 .content {
@@ -39,17 +39,13 @@ header {
 }
 
 .jumbotron img {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	/* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
 }
 
 .active {
 	color: white;
 }
 
-.bike-img {
-	max-width: 100px;
-	box-shadow: none !important;
-}
 
 .rented {
 	opacity: 0.25;
@@ -58,4 +54,74 @@ header {
 .my-2 {
 	background-color: grey !important;
 	color: white !important;
+}
+
+.list {
+	font-size:1.3rem;
+}
+
+.artist-logo {
+	max-width: 200px;
+	display: block;
+	margin: 40px;
+}
+
+.fav-member {
+	width: 200px; /* width of container */
+	height: 200px; /* height of container */
+	object-fit: cover;
+	overflow: hidden;
+	margin: 40px;
+}
+
+.percentage {
+	width: 500px;
+	height: 25px !important;
+	margin: 20px;
+}
+
+.collection-label {
+	font-size: 1.2rem;
+	margin: 10px;	
+}
+
+div.album-list img {
+	width: 150px;
+	height: 150px;
+	margin: 10px;
+	display: inline-block;
+	float: none;
+}
+
+.album-list {
+	overflow: auto;
+  white-space: nowrap;
+}
+
+.not-collected {
+	color: black;
+	opacity: 0.3;
+	
+}
+
+::-webkit-scrollbar {
+	height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+	border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
+	border-radius: 10px;
 }

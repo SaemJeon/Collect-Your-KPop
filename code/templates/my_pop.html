@@ -17,7 +17,7 @@ My Pop
 		<a href="/edit_my_pop">
 			<i href="/edit_my_pop" class="far fa-edit fa-3x"></i>
 		</a>
-		<ul>
+		<ul class="list">
 			<li>
 				<div class="form-group row">
 					<label for="artist" class="col-sm-3 col-form-label">My Artist</label>
@@ -25,7 +25,6 @@ My Pop
 					</div>
 				</div>
 			</li>
-
 			<li>
 				<div class="form-group row">
 					<label for="member" class="col-sm-3 col-form-label">My Favorite Member</label>
@@ -33,7 +32,6 @@ My Pop
 					</div>
 				</div>
 			</li>
-
 			<li>
 				<div class="form-group row">
 					<label for="address" class="col-sm-3 col-form-label">Address</label>
@@ -48,7 +46,6 @@ My Pop
 					</div>
 				</div>
 			</li>
-
 			<li>
 				<div class="form-group row">
 					<label for="language" class="col-sm-3 col-form-label">Preferred Language</label>
@@ -76,10 +73,24 @@ My Pop
 					profile = data
 					$("#artist").append("<p class='form-control-plaintext'>" + profile['artist'] + "</p>")
 					$("#member").append("<p class='form-control-plaintext'>" + profile['member'] + "</p>")
-					var address = profile['city'] + ", " + profile['state'] + " " + profile['zipcode']
+					var address = "Please set your address"
+					if ((profile['city'] != null) && (profile['state'] != null) && (profile['zipcode'] != null)) {
+						address = profile['city'] + ", " + profile['state'] + " " + profile['zipcode']
+					}
+					
+					var distance = "Please set your preferred distance"
+					if (profile['distance'] != null) {
+						distance = profile['distance'] + " miles"
+					}
+
+					var language = "Please set your preferred language"
+					if (profile['language'] != "None") {
+						language = profile['language']
+					}
+
 					$("#address").append("<p class='form-control-plaintext'>" + address + "</p>")
-					$("#distance").append("<p class='form-control-plaintext'>" + profile['distance'] + " miles" + "</p>")
-					$("#language").append("<p class='form-control-plaintext'>" + profile['language'] + "</p>")
+					$("#distance").append("<p class='form-control-plaintext'>" + distance + "</p>")
+					$("#language").append("<p class='form-control-plaintext'>" + language + "</p>")
 				}
 			});;
 			return profile

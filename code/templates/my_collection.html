@@ -14,9 +14,73 @@ My Collection
 <section class="jumbotron">
   <div>
     <h1 class="jumbotron-heading">My Collection</h1>
-    
-    
+    <div class="row justify-content-md-center">
+      <div id="artist">
+      </div>
+      <div id="member">
+      </div>
+    </div>
+    <div class="collection-label">My Album</div>
+    <div class="progress percentage"0>
+      <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+    </div>
+
+    <div class="album-list" id="albums">
+    </div>
+
   </div>
+  <script>
+    var profile = get_profile()
+    get_albums(profile['artist'])
+
+		function get_profile() {
+			var profile = null;
+			$.ajax({
+				url: "/api/get_user_profile",
+				type: "get",
+				async: false,
+				success: function (data) {
+					profile = data
+					$("#artist").append("<img class='artist-logo' src='img/logos/" + profile['artist'] + ".png'/>")
+					$("#member").append("<img class='fav-member' src='img/members/" + profile['member'] + ".jpg'/>")
+				}
+			});;
+			return profile
+		}
+
+    function get_albums(group_id) {
+      $.ajax({
+        url: "/api/get_albums/" + String(group_id),
+        type: "get",
+        async: false,
+        success: function (data) {
+          var i;
+          var row = "";
+          $("#albums").empty()
+          for (i = 1; i < data['albums'].length+1; i++) {
+            row += "<img class='album not-collected' src='img/albums/" + group_id + "/" + i + ".jpg' id='" + i + "'/>"
+          }
+          $("#albums").append(row)
+          $("img").click(function(){
+            var group_id = $(this).attr("id");
+            update_Album(profile['artist'], group_id)
+          })
+        }
+      })
+    }
+
+    function update_Album(group_id, album_id) {
+      $.ajax({
+        url: "/api/update_album/" + String(group_id) + "/" + String(album_id),
+        type: "get",
+        async: false,
+        success: function () {
+          get_albums(group_id)
+        }
+      })
+    }
+    
+	</script>
 </section>
 
 {% endblock %}

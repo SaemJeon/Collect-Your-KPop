@@ -1,4 +1,4 @@
-import sqlite3, os
+import sqlite3, os, csv
 from flask import g
 
 DATABASE_PATH = os.path.join(os.path.dirname(__file__), 'kpop.db')
@@ -51,6 +51,16 @@ class Database:
 	def create_account(self, name, email, encrypted_password, dob, artist, member):
 		self.execute('INSERT INTO users (name, email, encrypted_password, dob, artist, member) VALUES (?, ?, ?, ?, ?, ?)',
 		[name, email, encrypted_password, dob, artist, member])
+		user_id = self.select('SELECT last_insert_rowid();')
+		self.create_user_album_data(user_id[0][0])
+	
+	def create_user_album_data(self, user_id):
+		with open('../code/db/albums.csv') as csv_file:
+			csv_reader = csv.reader(csv_file, delimiter=',')
+			for row in csv_reader:
+				self.execute('INSERT INTO user_albums (user_id, group_id, album_id, name, collected) VALUES (?, ?, ?, ?, ?)',
+				[user_id, int(row[0]), int(row[1]), row[2], int(row[3])])
+		return
 
 	def update_profile(self, artist, member, city, state, zipcode, distance, language, user_id):
 		#self.execute('INSERT INTO users (artist, member, city, state, zipcode, language) VALUES (?, ?, ?, ?, ?, ?) WHERE user_id=?', 
@@ -119,8 +129,10 @@ class Database:
 			member = self.select('SELECT name from members where member_id=?', [d[6]])
 			if d[11] == "EN":
 				lang = "English"
-			else:
+			elif d[11] == "KR":
 				lang = "Korean"
+			else:
+				lang = "None"
 
 			return {
 				'artist': artist,
@@ -133,6 +145,14 @@ class Database:
 			}
 		else:
 			return None
+	
+	def updateAlbum(self, user_id, group_id, album_id):
+		self.execute('UPDATE user_albums SET collected=not collected WHERE user_id=? and group_id=? and album_id=?', 
+		[user_id, group_id, album_id])
+	
+	def getAlbums(self, user_id, group_id):
+		data = self.select('SELECT * from user_albums WHERE user_id=? and group_id=?', [user_id, group_id])
+		### TODO: need to update this part -> Get album info
 
 	def close(self):
 		self.conn.close()

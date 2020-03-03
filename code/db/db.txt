@@ -33,4 +33,11 @@ CREATE TABLE members (
 .mode csv
 .import db/members.csv members
 
-    
+CREATE TABLE user_albums (
+    user_id INTEGER NOT NULL,
+    group_id INTEGER NOT NULL,
+    album_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    collected INTEGER NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(user_id)
+);

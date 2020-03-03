@@ -76,6 +76,7 @@ def create_account():
 			msg = "Please enter all the information"
 	return render_template('create_account.html', message=msg)
 
+
 # Handle Edit My Pop page
 @app.route('/edit_my_pop', methods=['GET', 'POST'])
 def edit_my_pop():
@@ -151,8 +152,18 @@ def api_members(group_id):
 def api_my_pop():
 	user = session['user']
 	pop = get_db().get_my_pop(user['user_id'])
-	print(pop)
 	return pop
+
+@app.route('/api/get_albums/<int:group_id>')
+def api_albums(group_id):
+	albums = os.listdir("../code/public/img/albums/" + str(group_id))
+	return {"albums": albums}
+
+@app.route('/api/update_album/<int:group_id>/<int:album_id>')
+def api_update_album(group_id, album_id):
+	user = session['user']
+	get_db().updateAlbum(user['user_id'], group_id, album_id)
+	return "Success"
 
 if __name__ == "__main__":
 	app.run(host='127.0.0.1', port=8080, debug=True)
