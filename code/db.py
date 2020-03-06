@@ -53,12 +53,21 @@ class Database:
 		[name, email, encrypted_password, dob, artist, member])
 		user_id = self.select('SELECT last_insert_rowid();')
 		self.create_user_album_data(user_id[0][0])
+		self.create_user_photo_data(user_id[0][0])
 	
 	def create_user_album_data(self, user_id):
 		with open('../code/db/albums.csv') as csv_file:
 			csv_reader = csv.reader(csv_file, delimiter=',')
 			for row in csv_reader:
 				self.execute('INSERT INTO user_albums (user_id, group_id, album_id, name, collected) VALUES (?, ?, ?, ?, ?)',
+				[user_id, int(row[0]), int(row[1]), row[2], int(row[3])])
+		return
+
+	def create_user_photo_data(self, user_id):
+		with open('../code/db/photocards.csv') as csv_file:
+			csv_reader = csv.reader(csv_file, delimiter=',')
+			for row in csv_reader:
+				self.execute('INSERT INTO user_photos (user_id, group_id, member_id, photo_id, collected) VALUES (?, ?, ?, ?, ?)',
 				[user_id, int(row[0]), int(row[1]), row[2], int(row[3])])
 		return
 
@@ -152,7 +161,27 @@ class Database:
 	
 	def getAlbums(self, user_id, group_id):
 		data = self.select('SELECT * from user_albums WHERE user_id=? and group_id=?', [user_id, group_id])
-		### TODO: need to update this part -> Get album info
+		if data:
+			albums = {}
+			for i in range(len(data)):
+				albums[i+1] = data[i]
+			return albums
+		else:
+			return None
+
+	def getPhotos(self, user_id, group_id, member_id):
+		data = self.select('SELECT * from user_photos WHERE user_id=? and group_id=? and member_id=?', [user_id, group_id, member_id])
+		if data:
+			photos = {}
+			for i in range(len(data)):
+				photos[i+1] = data[i]
+			return photos
+		else:
+			return None
+	
+	def updatePhoto(self, user_id, group_id, member_id, photo_id):
+		self.execute('UPDATE user_photos SET collected=not collected WHERE user_id=? and group_id=? and member_id=? and photo_id=?', 
+		[user_id, group_id, member_id, photo_id])
 
 	def close(self):
 		self.conn.close()

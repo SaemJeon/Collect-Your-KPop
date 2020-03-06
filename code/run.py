@@ -156,13 +156,26 @@ def api_my_pop():
 
 @app.route('/api/get_albums/<int:group_id>')
 def api_albums(group_id):
-	albums = os.listdir("../code/public/img/albums/" + str(group_id))
-	return {"albums": albums}
+	user = session['user']
+	albums = get_db().getAlbums(user['user_id'], group_id)
+	return albums
 
 @app.route('/api/update_album/<int:group_id>/<int:album_id>')
 def api_update_album(group_id, album_id):
 	user = session['user']
 	get_db().updateAlbum(user['user_id'], group_id, album_id)
+	return "Success"
+
+@app.route('/api/get_photos/<int:group_id>/<int:member_id>')
+def api_photos(group_id, member_id):
+	user = session['user']
+	photos = get_db().getPhotos(user['user_id'], group_id, member_id)
+	return photos
+
+@app.route('/api/update_photo/<int:group_id>/<int:member_id>/<int:photo_id>')
+def api_update_photo(group_id, member_id, photo_id):
+	user = session['user']
+	get_db().updatePhoto(user['user_id'], group_id, member_id, photo_id)
 	return "Success"
 
 if __name__ == "__main__":

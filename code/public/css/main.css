@@ -82,7 +82,8 @@ header {
 
 .collection-label {
 	font-size: 1.2rem;
-	margin: 10px;	
+	margin: 20px;	
+	font-weight: bold;
 }
 
 div.album-list img {
@@ -94,6 +95,19 @@ div.album-list img {
 }
 
 .album-list {
+	overflow: auto;
+  white-space: nowrap;
+}
+
+div.photo-list img {
+	width: 150px;
+	height: 200px;
+	margin: 10px;
+	display: inline-block;
+	float: none;
+}
+
+.photo-list {
 	overflow: auto;
   white-space: nowrap;
 }
