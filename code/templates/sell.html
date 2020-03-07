@@ -14,9 +14,231 @@ Sell
 <section class="jumbotron">
   <div>
     <h1 class="jumbotron-heading">Sell</h1>
-    
+    <Form method="POST" action="/edit_my_pop" class="needs-validation" novalidate></Form>
+    <div class="form-group row">
+      <label for="artist" class="col-3 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Artist</label>
+      <div class="col-7">
+        <select class="form-control" name="artist" id="artist">
+        </select>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="type" class="col-3 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Type</label>
+      <div class="col-7">
+        <select class="form-control" name="type" id="type">
+          <option value="1">Album</option>
+          <option value="2">Photo Cards</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group row" id="album_row">
+      <label for="albums" class="col-3 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Album</label>
+      <div class="col-7">
+        <select class="form-control" name="albums" id="albums">
+        </select>
+      </div>
+    </div>
+    <div class="form-group row" id="member_row">
+      <label for="members" class="col-3 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Member</label>
+      <div class="col-7">
+        <select class="form-control" name="members" id="members">
+        </select>
+      </div>
+    </div>
+    <div class="row justify-content-md-center">
+      <div id="artistLogo">
+      </div>
+      <div id="albumCover">
+      </div>
+      <div id="memberPhoto">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="delivery" class="col-3 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Delivery Option</label>
+      <div class="col-7">
+        <select class="form-control" name="delivery" id="delivery">
+          <option value="1">Pick-up</option>
+          <option value="2">Free Shipping</option>
+          <option value="3">Shipping Fee</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group row" id="pick-up_zip">
+      <label for="zipcode" class="col-3 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Zipcode</label>
+      <div class="col-7">
+        <input type="text" class="form-control" id="zipcode" name="zipcode" required>
+        </text>
+      </div>
+    </div>
+    <div class="form-group row" id="pick-up_dist">
+      <label for="distance" class="col-3 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Preferred Distance</label>
+      <div class="col-7">
+        <select class="form-control" id="distance" name="distance" required>
+          <option value="5">5 Miles</option>
+          <option value="10">10 Miles</option>
+          <option value="15">15 Miles</option>
+          <option value="20">20 Miles</option>
+          <option value="30">30 Miles</option>
+        </select>
+        <div class="invalid-feedback">
+          Please enter choose distance.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row" id="shipping">
+      <label for="shipping" class="col-3 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Shipping fee</label>
+      <div class="col-7">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <input type="text" class="form-control" aria-label="Amount (to the nearest cent)">
+        </div>
+        </text>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="price" class="col-3 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Price</label>
+      <div class="col-7">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <input type="text" class="form-control" aria-label="Amount (to the nearest cent)">
+        </div>
+        </text>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-2"></div>
+      <div class="col-4">
+        <button type="submit" class="btn btn-outline-info">Sell</button>
+      </div>
+    </div>
+  </form>
     
   </div>
+  <script>
+    screen_load()
+    $("#artist").change(showOptions)
+    $("#type").change(showOptions)
+    $("#albums").change(showPhotos)
+    $("#members").change(showPhotos)
+    $("#delivery").change(showDelivery)
+    // Load the screen and get all the info
+    function screen_load() {
+      get_groups()
+      showOptions()
+      get_members()
+      showPhotos()
+      showDelivery()
+    }
+
+    function get_groups() {
+      $.ajax({
+        url: "/api/get_groups", 
+        type: "get",
+        async: false,
+        success: function (groups) {
+        $('#artist').empty();
+        var group_list = $("#artist")
+        $.each(groups, function (key, value) {
+          group_list
+            .append($("<option></option>")
+              .attr("value", value[0])
+              .text(value[1]));
+        });
+      }})
+    }
+
+    function get_members() {
+      var group_id = $("#artist").val()
+      $.get("/api/get_members/" + String(group_id), function (members) {
+        $("#members").empty()
+        var member_list = $("#members")
+        $.each(members, function (key, value) {
+          member_list
+            .append($("<option></option>")
+              .attr("value", value[0])
+              .text(value[1]));
+        });
+        showPhotos()
+      });;
+    }
+
+    function get_albums_list() {
+      var group_id = $("#artist").val()
+      $.ajax({
+        url: "/api/get_albums/" + String(group_id),
+        type: "get",
+        async: false,
+        success: function (data) {
+          var i;
+          var row = "";
+          $("#albums").empty()
+          var album = $("#albums")
+          $.each(data, function (key, value) {
+            album
+              .append($("<option></option>")
+                .attr("value", value[2])
+                .text(value[3]));
+          });
+          showPhotos()
+        }
+      })
+    }
+
+    function showOptions() {
+      var type = document.getElementById("type");
+      var id = type[type.selectedIndex].value;
+      if (id == "1") {
+        $("#album_row").show();
+        $("#member_row").hide();
+        $("#albumCover").show();
+        $("#memberPhoto").hide();
+        get_albums_list()
+      } else {
+        $("#album_row").hide();
+        $("#member_row").show();
+        $("#albumCover").hide();
+        $("#memberPhoto").show();
+        get_members()
+      }
+    }
+
+    function showPhotos() {
+      var group_id = $("#artist").val()
+      var album_id = $("#albums").val()
+      var member_id = $("#members").val()
+      $("#artistLogo").empty()
+      $("#artistLogo").append("<img class='artist-logo' src='img/logos/" + group_id + ".png'/>")
+      $("#albumCover").empty()
+      $("#albumCover").append("<img class='fav-member' src='img/albums/" + group_id + "/" + album_id + ".jpg'/>")
+      $("#memberPhoto").empty()
+      $("#memberPhoto").append("<img class='fav-member' src='img/members/" + member_id + ".jpg'/>")
+    }
+
+    function showDelivery() {
+      var option = $("#delivery").val()
+      if (option == "1") {
+        $("#pick-up_zip").show()
+        $("#pick-up_dist").show()
+        $("#shipping").hide()
+      } else if (option == "2") {
+        $("#pick-up_zip").hide()
+        $("#pick-up_dist").hide()
+        $("#shipping").hide()
+      } else {
+        $("#pick-up_zip").hide()
+        $("#pick-up_dist").hide()
+        $("#shipping").show()
+      }
+    }
+
+  </script>
 </section>
 
 {% endblock %}

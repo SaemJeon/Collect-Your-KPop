@@ -57,6 +57,7 @@ header {
 
 .artist-logo {
 	max-width: 200px;
+	height: 200px;
 	display: block;
 	margin: 40px;
 }
@@ -92,6 +93,11 @@ div.album-list img {
 .album-list {
 	overflow: auto;
   white-space: nowrap;
+}
+
+.album {
+	width: 150px;
+	height: 150px;
 }
 
 div.photo-list img {
