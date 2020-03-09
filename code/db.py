@@ -199,9 +199,11 @@ class Database:
 		
 	def applyFilter(self, group_id, sell_type, album_id, member_id, price, delivery):
 		data = None
-		print(group_id, sell_type, member_id)
 		if sell_type == "1":
-			data = self.select('SELECT * from products WHERE group_id=? and sell_type=? and album_id=?', [group_id, sell_type, album_id])
+			if album_id:
+				data = self.select('SELECT * from products WHERE group_id=? and sell_type=? and album_id=?', [group_id, sell_type, album_id])
+			else:
+				data = self.select('SELECT * from products WHERE group_id=? and sell_type=?', [group_id, sell_type])
 		else:
 			data = self.select('SELECT * from products WHERE group_id=? and sell_type=? and member_id=?',  [group_id, sell_type, member_id])
 		if data:

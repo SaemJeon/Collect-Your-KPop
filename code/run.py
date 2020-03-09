@@ -106,10 +106,7 @@ def buy():
 		artist = request.form['artist']
 		sell_type = request.form['type']
 		album = request.form['albums']
-		if sell_type == "2":
-			member = request.form['members']
-		else:
-			member = None
+		member = request.form['members']
 		delivery = request.form['delivery']
 		price = request.form['price']
 		products = get_db().applyFilter(artist, sell_type, album, member, price, delivery)

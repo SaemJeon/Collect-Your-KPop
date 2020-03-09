@@ -271,8 +271,8 @@ Buy
       var artist = $("#artist").val()
 			var type = $("#type").val()
       if (artist == "") {
-        $("#albums").empty()
-        $("#members").empty()
+        $("#albums").empty().append($("<option></option>"))
+        $("#members").empty().append($("<option></option>"))
       } else {
         if (type == "1") {
 				$("#member_row").hide();
@@ -290,10 +290,10 @@ Buy
       albums = get_all_albums()
       members = get_all_members()
       loadProducts()
+      showOptions()
       $("#artist").change(showOptions)
       $("#type").change(showOptions)
-      $("#albums").change()
-      $("#members").change()
+      
     });
   </script>
 </section>
