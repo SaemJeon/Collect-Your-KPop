@@ -14,9 +14,80 @@ Buy
 <section class="jumbotron">
   <div>
     <h1 class="jumbotron-heading">Buy</h1>
-    
-    
+    <div class="column" id="product_list">
+    </div>
   </div>
+  <script>
+    var groups = {1: "BTS", 2: "Red Velvet", 3: "TWICE"}
+    var albums = get_albums()
+    var members = get_members()
+    get_products(groups, albums, members)
+
+    function get_albums() {
+      var albums = null;
+      $.ajax({
+        url: "/api/get_all_albums",
+        type: "get",
+        async: false,
+        success: function (data) {
+          albums = data;
+        }
+      })
+      return albums
+    }
+
+    function get_members() {
+      var members = null;
+      $.ajax({
+        url: "/api/get_all_members",
+        type: "get",
+        async: false,
+        success: function (data) {
+          members = data;
+        }
+      })
+      return members
+    }
+
+    function get_products(groups, albums, members) {
+			$.ajax({
+				url: "/api/get_products",
+				type: "get",
+				async: false,
+				success: function (products) {
+          var i, photo, description, opening, cart;
+          $("#product_list").empty()
+					for (i = 1; i < Object.keys(products).length+1; i++) {
+            opening = "<div class='product-list row id='" + products[i][0] + "'>"
+            ending = "</div>"
+            description = "<div class='d-flex flex-column product-description col-3'>"
+            if (products[i][3] == "1") {
+              photo = "<div class='product-pic'><img class='product-album' src='img/albums/" + products[i][2] + "/" + products[i][4] + ".jpg'/></div>"
+              description += "<p>Album</p>"
+              description += "<p class='product-bold'>" + groups[products[i][2]] + ": " + albums[products[i][2]][products[i][4]][2] +  "</p>"
+              description += "<p>$" + products[i][10] + "</p>"
+            } else {
+              photo = "<div class='product-pic'><img class='product-photo' src='img/photocards/" + products[i][2] + "/" + products[i][5] + "_" + products[i][4] + ".jpg'/></div>"
+              description += "<p>Photo Card</p>"
+              description += "<p class='product-bold'>" + groups[products[i][2]] + " " + members[products[i][5]][0][1] + ": " + albums[products[i][2]][products[i][4]][2] +  "</p>"
+              description += "<p>$" + products[i][10] + "</p>"
+
+              console.log(members)
+            }
+            if (products[i][6] == "1") {
+              description += "<p>Pick-up: within " + products[i][8] + " miles of " + products[i][7] + "</p>" + ending
+            } else if (products[i][6] == "2") {
+              description += "<p>Free shipping</p>" + ending
+            } else {
+              description += "<p>+$" + products[i][9] +" shipping</p>" + ending
+            }
+            cart ="<div class='d-flex flex-column cart'><img class='shopping-cart' src='/img/shopping_cart.svg'></div>"
+            $("#product_list").append(opening + photo + description + cart)
+          }
+				}
+			})
+		}
+  </script>
 </section>
 
 {% endblock %}

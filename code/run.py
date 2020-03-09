@@ -3,7 +3,7 @@ CS530: GUI, Project '''
 
 from flask import Flask, render_template, send_file, jsonify, request, g, redirect, session
 from passlib.hash import pbkdf2_sha256
-import json
+import json, csv
 import os
 from db import Database
 from uszipcode import Zipcode
@@ -105,8 +105,40 @@ def buy():
 	return render_template('buy.html')
 
 # Handle Sell page
-@app.route('/sell')
+@app.route('/sell', methods=['GET', 'POST'])
 def sell():
+	if request.method == 'POST':
+		artist = request.form['artist']
+		sell_type = request.form['type']
+		album = request.form['albums']
+		member = request.form['members']
+		delivery = request.form['delivery']
+		zipcode = request.form['zipcode']
+		distance = request.form['distance']
+		fee = request.form['fee']
+		price = request.form['price']
+		user = session['user']
+		if sell_type == "1":
+			if delivery == "1":
+				if artist and album and zipcode and distance and price:
+					get_db().addProduct(user['user_id'], artist, sell_type, album, None, delivery, zipcode, distance, None, price, 0)
+			elif delivery == "2":
+				if artist and album and price:
+					get_db().addProduct(user['user_id'], artist, sell_type, album, None, delivery, None, None, None, price, 0)
+			else:
+				if artist and album and fee and price:
+					get_db().addProduct(user['user_id'], artist, sell_type, album, None, delivery, None, None, fee, price, 0)
+		else:
+			if delivery == "1":
+				if artist and member and zipcode and distance and price:
+					get_db().addProduct(user['user_id'], artist, sell_type, album, member, delivery, zipcode, distance, None, price, 0)
+			elif delivery == "2":
+				if artist and member and price:
+					get_db().addProduct(user['user_id'], artist, sell_type, album, member, delivery, None, None, None, price, 0)
+			else:
+				if artist and member and fee and price:
+					get_db().addProduct(user['user_id'], artist, sell_type, album, member, delivery, None, None, fee, price, 0)
+		return redirect('my_collection')
 	return render_template('sell.html')
 
 # Handle any files that begin "/course" by loading from the course directory
@@ -160,6 +192,27 @@ def api_albums(group_id):
 	albums = get_db().getAlbums(user['user_id'], group_id)
 	return albums
 
+@app.route('/api/get_all_albums')
+def api_all_albums():
+	albums = {}
+	with open('../code/db/albums.csv') as csv_file:
+		csv_reader = csv.reader(csv_file, delimiter=',')
+		for row in csv_reader:
+			if row[0] in albums:
+				albums[row[0]].append(row)
+			else:
+				albums[row[0]] = [row]
+	return albums
+
+@app.route('/api/get_all_members')
+def api_all_members():
+	members = {}
+	with open('../code/db/members.csv') as csv_file:
+		csv_reader = csv.reader(csv_file, delimiter=',')
+		for row in csv_reader:
+			members[row[0]] = [row]
+	return members
+
 @app.route('/api/update_album/<int:group_id>/<int:album_id>')
 def api_update_album(group_id, album_id):
 	user = session['user']
@@ -177,6 +230,11 @@ def api_update_photo(group_id, member_id, photo_id):
 	user = session['user']
 	get_db().updatePhoto(user['user_id'], group_id, member_id, photo_id)
 	return "Success"
+
+@app.route('/api/get_products')
+def api_get_products():
+	products = get_db().getProducts()
+	return products
 
 if __name__ == "__main__":
 	app.run(host='127.0.0.1', port=8080, debug=True)

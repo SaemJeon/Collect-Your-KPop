@@ -95,7 +95,7 @@ Edit My Pop
       </div>
       <div class="form-group col-md-2">
         <label for="zipcode" style="font-size: 1.2rem; font-weight: bold;">Zip</label>
-        <input type="text" class="form-control" id="zipcode" name="zipcode" required>
+        <input type="text" class="form-control" id="zipcode" name="zipcode" pattern="[0-9]{5}" maxlength="5" required>
         <div class="invalid-feedback">
           Please enter valid zip code.
         </div>
@@ -124,7 +124,7 @@ Edit My Pop
         Please choose your preferred language.
       </div>
     </div>
-    <div class="row">
+    <div class="row justify-content-md-center">
       <div class="col-2"></div>
       <div class="col-4">
         <button type="submit" class="btn btn-outline-info">Submit</button>

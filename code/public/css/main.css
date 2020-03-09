@@ -65,9 +65,14 @@ header {
 .fav-member {
 	width: 200px; /* width of container */
 	height: 200px; /* height of container */
-	object-fit: cover;
-	overflow: hidden;
 	margin: 40px;
+	display: block;
+}
+
+.photocard {
+	height: 200px;
+	margin: 40px;
+	display: block;
 }
 
 .percentage {
@@ -138,4 +143,55 @@ div.photo-list img {
 ::-webkit-scrollbar-thumb:hover {
 	background: #555;
 	border-radius: 10px;
+}
+
+.product-pic {
+	height: 200px;
+	width: 200px;
+	margin: 20px;
+	text-align: center;
+}
+
+.product-album {
+	height: 200px;
+	width: 200px;
+}
+
+.product-photo {
+	height:200px;
+}
+
+
+.product-description {
+	display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.shopping-cart {
+	height: 50px;
+	width: 50px;
+	margin: 50px;
+}
+
+.cart {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	margin-left: 50px;
+}
+
+.sell-photo {
+	display: flex;
+	justify-content: center;
+	flex-direction: row;
+}
+
+.product-list {
+	border-bottom: 1px solid grey;
+}
+
+.product-bold {
+	font-size: 1.2rem;
+	font-weight: bold;
 }

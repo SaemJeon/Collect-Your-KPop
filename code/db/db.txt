@@ -50,3 +50,19 @@ CREATE TABLE user_photos (
     collected INTEGER NOT NULL,
     FOREIGN KEY(user_id) REFERENCES users(user_id)
 );
+
+CREATE TABLE products (
+    product_id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    group_id INTEGER NOT NULL,
+    sell_type INTEGER NOT NULL,
+    album_id INTEGER NOT NULL,
+    member_id INTEGER,
+    delivery INTEGER NOT NULL,
+    zipcode INTEGER,
+    distance INTEGER,
+    shipping_fee REAL,
+    price REAL NOT NULL,
+    sold INTEGER NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES user(user_id)
+);

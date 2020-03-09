@@ -182,6 +182,20 @@ class Database:
 	def updatePhoto(self, user_id, group_id, member_id, photo_id):
 		self.execute('UPDATE user_photos SET collected=not collected WHERE user_id=? and group_id=? and member_id=? and photo_id=?', 
 		[user_id, group_id, member_id, photo_id])
+	
+	def addProduct(self, user_id, group_id, sell_type, album_id, member_id, delivery, zipcode, distance, fee, price, sold):
+		self.execute('INSERT INTO products (user_id, group_id, sell_type, album_id, member_id, delivery, zipcode, distance, shipping_fee, price, sold) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+		[user_id, group_id, sell_type, album_id, member_id, delivery, zipcode, distance, fee, price, sold])
 
+	def getProducts(self):
+		data = self.select('SELECT * from products')
+		if data:
+			products = {}
+			for i in range(len(data)):
+				products[i+1] = data[i]
+			return products
+		else:
+			return None
+	
 	def close(self):
 		self.conn.close()

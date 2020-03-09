@@ -81,9 +81,9 @@ My Collection
             var album_id = $(this).attr("id");
             var msg;
             if (data[album_id][4]) {
-              msg = "Remove " + data[album_id][3] + " to your collection?"
+              msg = "Remove " + data[album_id][3] + " from your collection?"
             } else {
-              msg = "Add " + data[album_id][3] + " from your collection?"
+              msg = "Add " + data[album_id][3] + " to your collection?"
             }
             if (confirm(msg)) {
               update_Album(profile['artist'], album_id)
@@ -141,9 +141,9 @@ My Collection
             var photo_id = $(this).attr("id");
             var msg;
             if (data[photo_id][4]) {
-              msg = "Remove this photo card to your collection?"
+              msg = "Remove this photo card from your collection?"
             } else {
-              msg = "Add this photo card from your collection?"
+              msg = "Add this photo card to your collection?"
             }
             if (confirm(msg)) {
               update_Photo(profile['artist'], member_id, photo_id)
