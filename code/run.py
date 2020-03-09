@@ -1,9 +1,9 @@
 ''' Saem Jeon, sj846@drexel.edu
 CS530: GUI, Project '''
 
-from flask import Flask, render_template, send_file, jsonify, request, g, redirect, session
+from flask import Flask, render_template, send_file, jsonify, request, g, redirect, session, make_response
 from passlib.hash import pbkdf2_sha256
-import json, csv
+import json, csv, requests
 import os
 from db import Database
 from uszipcode import Zipcode
@@ -100,9 +100,29 @@ def my_collection():
 	return render_template('my_collection.html')
 
 # Handle Buy page
-@app.route('/buy')
+@app.route('/buy', methods=['GET', 'POST'])
 def buy():
-	return render_template('buy.html')
+	if request.method == "POST":
+		artist = request.form['artist']
+		sell_type = request.form['type']
+		album = request.form['albums']
+		if sell_type == "2":
+			member = request.form['members']
+		else:
+			member = None
+		delivery = request.form['delivery']
+		price = request.form['price']
+		products = get_db().applyFilter(artist, sell_type, album, member, price, delivery)
+	else:
+		products = get_db().getProducts()
+	if products:
+		for i in products:
+			for j in range(len(products[i])):
+				if products[i][j] is None:
+					products[i][j] = 99999
+	else:
+		products = {}
+	return render_template('buy.html', data = products)
 
 # Handle Sell page
 @app.route('/sell', methods=['GET', 'POST'])

@@ -16,7 +16,7 @@ Buy
     <h1 class="jumbotron-heading">Buy</h1>
     <div class="row">
       <div class="column col-3 search-box" id="serach">
-        <form method="POST" action="/search" class="needs-validation" novalidate>
+        <form method="POST" action="/buy" class="needs-validation" novalidate>
           <div style="text-align: right;">
             <button type="reset" class="btn btn-outline-info">Reset filters</button>
           </div>
@@ -68,22 +68,17 @@ Buy
       <div class="column col-9" id="product_list"></div>
     </div>
     <nav>
-      <ul id="paginator" class="pagination justify-content-center">
-        <!-- <li class="page-item">
-          <a class="page-link" href="#" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-            <span class="sr-only">Previous</span>
-          </a>
-        </li> -->
+      <ul id="paginator" class="pagination justify-content-center pagelink-style">
       </ul>
     </nav>
   </div>
   <script>
-    var groups, albums, members, products;
+    var groups, albums, members
     var currentPage = 1;
     const productPerPage = 2;
     var numOfPages = 1;
     var pageList = new Array();
+    var products = {{ data }}
 
     // Load product listing
     function loadProducts() {
@@ -132,7 +127,7 @@ Buy
 			$.get("/api/get_members/" + String(group_id), function (members) {
 				$("#members").empty()
 				var member_list = $("#members")
-        member_list.append($("<option></option>"))
+        member_list.append($("<option></option>").attr("value", 0))
 				$.each(members, function (key, value) {
 					member_list
 						.append($("<option></option>")
@@ -219,16 +214,17 @@ Buy
       var i, photo, description, opening, cart, productList;
       opening = "<div class='product-list row id='" + product[0] + "'>"
       ending = "</div>"
+      console.log(albums)
       description = "<div class='d-flex flex-column product-description col-4'>"
       if (product[3] == "1") {
         photo = "<div class='product-pic'><img class='product-album' src='img/albums/" + product[2] + "/" + product[4] + ".jpg'/></div>"
         description += "<p>Album</p>"
-        description += "<p class='product-bold'>" + groups[product[2]-1][1] + ": " + albums[product[2]][product[4]][2] +  "</p>"
+        description += "<p class='product-bold'>" + groups[product[2]-1][1] + ": " + albums[product[2]][product[4]-1][2] +  "</p>"
         description += "<p>$" + product[10] + "</p>"
       } else {
         photo = "<div class='product-pic'><img class='product-photo' src='img/photocards/" + product[2] + "/" + product[5] + "_" + product[4] + ".jpg'/></div>"
         description += "<p>Photo Card</p>"
-        description += "<p class='product-bold'>" + groups[product[2]-1][1] + " " + members[product[5]][0][1] + ": " + albums[product[2]][product[4]][2] +  "</p>"
+        description += "<p class='product-bold'>" + groups[product[2]-1][1] + " " + members[product[5]][0][1] + ": " + albums[product[2]][product[4]-1][2] +  "</p>"
         description += "<p>$" + product[10] + "</p>"
       }
       if (product[6] == "1") {
@@ -293,7 +289,7 @@ Buy
       groups = get_groups()
       albums = get_all_albums()
       members = get_all_members()
-      get_products(groups, albums, members)
+      loadProducts()
       $("#artist").change(showOptions)
       $("#type").change(showOptions)
       $("#albums").change()

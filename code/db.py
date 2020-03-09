@@ -192,10 +192,26 @@ class Database:
 		if data:
 			products = {}
 			for i in range(len(data)):
-				products[i+1] = data[i]
+				products[i+1] = list(data[i])
 			return products
 		else:
 			return None
+		
+	def applyFilter(self, group_id, sell_type, album_id, member_id, price, delivery):
+		data = None
+		print(group_id, sell_type, member_id)
+		if sell_type == "1":
+			data = self.select('SELECT * from products WHERE group_id=? and sell_type=? and album_id=?', [group_id, sell_type, album_id])
+		else:
+			data = self.select('SELECT * from products WHERE group_id=? and sell_type=? and member_id=?',  [group_id, sell_type, member_id])
+		if data:
+			products = {}
+			for i in range(len(data)):
+				products[i+1] = list(data[i])
+			return products
+		else:
+			return None
+		return
 	
 	def close(self):
 		self.conn.close()
