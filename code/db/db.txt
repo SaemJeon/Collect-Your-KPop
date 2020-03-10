@@ -66,3 +66,11 @@ CREATE TABLE products (
     sold INTEGER NOT NULL,
     FOREIGN KEY(user_id) REFERENCES user(user_id)
 );
+
+CREATE TABLE cart (
+    cart_id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    product_id INTEGER NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES user(user_id),
+    FOREIGN KEY(product_id) REFERENCES products(product_id)
+);

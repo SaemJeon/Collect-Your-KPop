@@ -253,5 +253,11 @@ def api_get_products():
 	products = get_db().getProducts()
 	return products
 
+@app.route('/api/add_to_cart/<int:product_id>')
+def api_add_to_cart(product_id):
+	user = session['user']
+	get_db().addToCart(user['user_id'], product_id)
+	return "Sucess"
+
 if __name__ == "__main__":
 	app.run(host='127.0.0.1', port=8080, debug=True)

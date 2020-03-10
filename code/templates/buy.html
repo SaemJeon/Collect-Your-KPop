@@ -18,7 +18,7 @@ Buy
       <div class="column col-3 search-box" id="serach">
         <form method="POST" action="/buy" class="needs-validation" novalidate>
           <div style="text-align: right;">
-            <button type="reset" class="btn btn-outline-info">Reset filters</button>
+            <button type="reset" class="btn btn-outline-info" id="resetButton">Reset filters</button>
           </div>
           <div class="form-group column">
             <label for="artist" class="col-3 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Artist</label>
@@ -127,7 +127,7 @@ Buy
 			$.get("/api/get_members/" + String(group_id), function (members) {
 				$("#members").empty()
 				var member_list = $("#members")
-        member_list.append($("<option></option>").attr("value", 0))
+        member_list.append($("<option></option>"))
 				$.each(members, function (key, value) {
 					member_list
 						.append($("<option></option>")
@@ -212,9 +212,8 @@ Buy
     // Build product list row
     function buildProductList(product) {
       var i, photo, description, opening, cart, productList;
-      opening = "<div class='product-list row id='" + product[0] + "'>"
+      opening = "<div class='product-list row' id='productRow'>"
       ending = "</div>"
-      console.log(albums)
       description = "<div class='d-flex flex-column product-description col-4'>"
       if (product[3] == "1") {
         photo = "<div class='product-pic'><img class='product-album' src='img/albums/" + product[2] + "/" + product[4] + ".jpg'/></div>"
@@ -235,7 +234,7 @@ Buy
       } else {
         description += "<p>+$" + product[9] +" shipping</p>" + ending
       }
-      cart ="<div class='d-flex flex-column cart'><img class='shopping-cart' src='/img/shopping_cart.svg'></div>"
+      cart ="<div class='d-flex flex-column cart' id='cart'><img class='shopping-cart' src='/img/shopping_cart.svg' id='" + product[0] + "' onclick='addToCart(this)'></div>"
       productList = opening + photo + description + cart
       return productList
     }
@@ -285,6 +284,18 @@ Buy
       }
 		}
 
+    function addToCart(obj) {
+      var product_id = obj.id
+      $.ajax({
+				url: "/api/add_to_cart/" + String(product_id),
+				type: "get",
+				async: false,
+				success: function (data) {
+          console.log(data)
+				}
+			})
+    }
+
     $(function () {
       groups = get_groups()
       albums = get_all_albums()
@@ -293,7 +304,6 @@ Buy
       showOptions()
       $("#artist").change(showOptions)
       $("#type").change(showOptions)
-      
     });
   </script>
 </section>

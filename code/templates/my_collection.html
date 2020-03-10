@@ -128,11 +128,9 @@ My Collection
           percentage = calcAlbumProgress(data);
           $("#photoProgress").attr("style", "width: " + percentage + "%").text(percentage + "%")
           for (i = 1; i < Object.keys(data).length+1; i++) {
-            console.log(group_id, member_id)
             if (data[i][4]) {
               row += "<img class='photo' src='img/photocards/" + group_id + "/" + member_id + "_" + i + ".jpg' id='" + i + "'/>"
             } else {
-              console.log('I got here')
               row += "<img class='photo not-collected' src='img/photocards/" + group_id + "/" + member_id + "_" + i + ".jpg' id='" + i + "'/>"
             }
           }

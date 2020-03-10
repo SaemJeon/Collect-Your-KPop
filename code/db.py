@@ -72,7 +72,6 @@ class Database:
 		return
 
 	def update_profile(self, artist, member, city, state, zipcode, distance, language, user_id):
-		#self.execute('INSERT INTO users (artist, member, city, state, zipcode, language) VALUES (?, ?, ?, ?, ?, ?) WHERE user_id=?', 
 		self.execute('UPDATE users SET artist=?, member=?, city=?, state=?, zipcode=?, distance=?, language=? WHERE user_id=?',
 		[artist, member, city, state, zipcode, distance, language, user_id])
 
@@ -199,13 +198,19 @@ class Database:
 		
 	def applyFilter(self, group_id, sell_type, album_id, member_id, price, delivery):
 		data = None
-		if sell_type == "1":
-			if album_id:
-				data = self.select('SELECT * from products WHERE group_id=? and sell_type=? and album_id=?', [group_id, sell_type, album_id])
-			else:
-				data = self.select('SELECT * from products WHERE group_id=? and sell_type=?', [group_id, sell_type])
-		else:
-			data = self.select('SELECT * from products WHERE group_id=? and sell_type=? and member_id=?',  [group_id, sell_type, member_id])
+		sql = "SELECT * FROM products WHERE " + " AND ".join([
+			self.constructCondition("group_id", group_id), 
+			self.constructCondition("sell_type", sell_type), 
+			self.constructCondition("album_id", album_id),
+			self.constructCondition("member_id", member_id),
+			self.constructCondition("delivery", delivery)])
+		if price == "1":
+			sql += " ORDER BY price ASC"
+		elif price == "2":
+			sql += " ORDER BY price DESC"
+		
+		data = self.select(sql)
+
 		if data:
 			products = {}
 			for i in range(len(data)):
@@ -214,6 +219,14 @@ class Database:
 		else:
 			return None
 		return
+
+	def constructCondition(self, field_name, field_value):
+		return field_name + " = " + str(field_value) if field_value else "(" + field_name + " is null or " + field_name + " like '%')"
+	
+	def addToCart(self, user_id, product_id):
+		data = self.select('SELECT * FROM cart WHERE product_id = ?', [product_id])
+		if not data:
+			self.execute('INSERT INTO cart (user_id, product_id) VALUES (?, ?)', [user_id, product_id])
 	
 	def close(self):
 		self.conn.close()
