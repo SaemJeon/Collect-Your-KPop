@@ -17,43 +17,35 @@ My Pop
 		<a href="/edit_my_pop">
 			<i href="/edit_my_pop" class="far fa-edit fa-3x"></i>
 		</a>
-		<ul class="list">
-			<li>
-				<div class="form-group row">
-					<label for="artist" class="col-sm-4 col-form-label" style="font-size: 1.2rem; font-weight: bold;">My Artist</label>
-					<div class="col-sm-6" name="artist" id="artist">
-					</div>
-				</div>
-			</li>
-			<li>
-				<div class="form-group row">
-					<label for="member" class="col-sm-4 col-form-label" style="font-size: 1.2rem; font-weight: bold;">My Favorite Member</label>
-					<div class="col-sm-6" name="member" id="member">
-					</div>
-				</div>
-			</li>
-			<li>
-				<div class="form-group row">
-					<label for="address" class="col-sm-4 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Address</label>
-					<div class="col-sm-6" name="address" id="address">
-					</div>
-				</div>
-			</li>
-			<li>
-				<div class="form-group row">
-					<label for="distance" class="col-sm-4 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Preferred Distance</label>
-					<div class="col-sm-6" name="distance" id="distance">
-					</div>
-				</div>
-			</li>
-			<li>
-				<div class="form-group row">
-					<label for="language" class="col-sm-4 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Preferred Language</label>
-					<div class="col-sm-6" name="language" id="language">
-					</div>
-				</div>
-			</li>
-		</ul>
+		<div class="form-group row">
+			<label for="artist" class="col-sm-4 col-form-label" style="font-size: 1.2rem; font-weight: bold;">My
+				Artist</label>
+			<div class="col-sm-6" name="artist" id="artist">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="member" class="col-sm-4 col-form-label" style="font-size: 1.2rem; font-weight: bold;">My Favorite
+				Member</label>
+			<div class="col-sm-6" name="member" id="member">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="address" class="col-sm-4 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Address</label>
+			<div class="col-sm-6" name="address" id="address">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="distance" class="col-sm-4 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Preferred
+				Distance</label>
+			<div class="col-sm-6" name="distance" id="distance">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="language" class="col-sm-4 col-form-label" style="font-size: 1.2rem; font-weight: bold;">Preferred
+				Language</label>
+			<div class="col-sm-6" name="language" id="language">
+			</div>
+		</div>
 
 	</div>
 	<script>
@@ -77,7 +69,7 @@ My Pop
 					if ((profile['city'] != null) && (profile['state'] != null) && (profile['zipcode'] != null)) {
 						address = profile['city'] + ", " + profile['state'] + " " + profile['zipcode']
 					}
-					
+
 					var distance = "Please set your preferred distance"
 					if (profile['distance'] != null) {
 						distance = profile['distance'] + " miles"

@@ -160,6 +160,7 @@ class Database:
 	
 	def getAlbums(self, user_id, group_id):
 		data = self.select('SELECT * from user_albums WHERE user_id=? and group_id=?', [user_id, group_id])
+		print(data)
 		if data:
 			albums = {}
 			for i in range(len(data)):
@@ -182,12 +183,12 @@ class Database:
 		self.execute('UPDATE user_photos SET collected=not collected WHERE user_id=? and group_id=? and member_id=? and photo_id=?', 
 		[user_id, group_id, member_id, photo_id])
 	
-	def addProduct(self, user_id, group_id, sell_type, album_id, member_id, delivery, zipcode, distance, fee, price, sold):
-		self.execute('INSERT INTO products (user_id, group_id, sell_type, album_id, member_id, delivery, zipcode, distance, shipping_fee, price, sold) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-		[user_id, group_id, sell_type, album_id, member_id, delivery, zipcode, distance, fee, price, sold])
+	def addProduct(self, user_id, group_id, sell_type, album_id, member_id, delivery, zipcode, distance, fee, price, sold, confirm):
+		self.execute('INSERT INTO products (user_id, group_id, sell_type, album_id, member_id, delivery, zipcode, distance, shipping_fee, price, sold, confirm) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+		[user_id, group_id, sell_type, album_id, member_id, delivery, zipcode, distance, fee, price, sold, confirm])
 
 	def getProducts(self):
-		data = self.select('SELECT * from products')
+		data = self.select('SELECT * from products WHERE sold=0')
 		if data:
 			products = {}
 			for i in range(len(data)):
@@ -203,7 +204,8 @@ class Database:
 			self.constructCondition("sell_type", sell_type), 
 			self.constructCondition("album_id", album_id),
 			self.constructCondition("member_id", member_id),
-			self.constructCondition("delivery", delivery)])
+			self.constructCondition("delivery", delivery),
+			self.constructCondition("sold", 0)])
 		if price == "1":
 			sql += " ORDER BY price ASC"
 		elif price == "2":
@@ -224,9 +226,56 @@ class Database:
 		return field_name + " = " + str(field_value) if field_value else "(" + field_name + " is null or " + field_name + " like '%')"
 	
 	def addToCart(self, user_id, product_id):
-		data = self.select('SELECT * FROM cart WHERE product_id = ?', [product_id])
+		data = self.select('SELECT * FROM cart WHERE user_id=? and product_id = ?', [user_id, product_id])
 		if not data:
 			self.execute('INSERT INTO cart (user_id, product_id) VALUES (?, ?)', [user_id, product_id])
 	
+	def getShoppingCart(self, user_id):
+		data = self.select("SELECT * FROM products WHERE product_id IN (SELECT product_id FROM cart WHERE user_id=?) and sold=0", [user_id])
+		if data:
+			products = {}
+			for i in range(len(data)):
+				products[i+1] = list(data[i])
+			return products
+		else:
+			return None
+		return
+	
+	def getMySelling(self, user_id):
+		data = self.select("SELECT * FROM products WHERE user_id=?", [user_id])
+		if data:
+			products = {}
+			for i in range(len(data)):
+				products[i+1] = list(data[i])
+			return products
+		else:
+			return None
+		return
+	
+	def removeFromCart(self, user_id, product_id):
+		self.execute('DELETE FROM cart WHERE user_id=? and product_id=?', [user_id, product_id])
+	
+	def buyProduct(self, user_id, product_id):
+		self.execute('UPDATE products SET sold=1 WHERE product_id=?', [product_id])
+		data = self.select('SELECT * FROM orders WHERE user_id=? and product_id = ?', [user_id, product_id])
+		if not data:
+			self.execute('INSERT INTO orders (user_id, product_id, confirm) VALUES(?, ?, ?)', [user_id, product_id, 0])
+		self.removeFromCart(user_id, product_id)
+	
+	def getOrderHistory(self, user_id):
+		data = self.select("SELECT * FROM products WHERE product_id IN (SELECT product_id FROM orders WHERE user_id=?)", [user_id])
+		if data:
+			products = {}
+			for i in range(len(data)):
+				products[i+1] = list(data[i])
+			return products
+		else:
+			return None
+		return
+
+	def confirmOrder(self, user_id, product_id):
+		self.execute('UPDATE products SET confirm=1 WHERE product_id=?', [product_id])
+		self.execute('UPDATE orders SET confirm=1 WHERE user_id=? and product_id=?', [user_id, product_id])
+
 	def close(self):
 		self.conn.close()

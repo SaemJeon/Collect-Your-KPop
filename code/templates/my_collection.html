@@ -13,7 +13,7 @@ My Collection
 
 <section class="jumbotron">
   <div>
-    <h1 class="jumbotron-heading">My Collection</h1>
+    <h1 class="jumbotron-heading ">My Collection</h1>
     <div class="row justify-content-md-center">
       <div id="artist">
       </div>
@@ -69,6 +69,7 @@ My Collection
           $("#albums").empty()
           percentage = calcAlbumProgress(data);
           $("#albumProgress").attr("style", "width: " + percentage + "%").text(percentage + "%")
+          console.log(Object.keys(data).length)
           for (i = 1; i < Object.keys(data).length+1; i++) {
             if (data[i][4]) {
               row += "<img class='album' src='img/albums/" + group_id + "/" + i + ".jpg' id='" + i + "'/>"

@@ -234,7 +234,8 @@ Buy
       } else {
         description += "<p>+$" + product[9] +" shipping</p>" + ending
       }
-      cart ="<div class='d-flex flex-column cart' id='cart'><img class='shopping-cart' src='/img/shopping_cart.svg' id='" + product[0] + "' onclick='addToCart(this)'></div>"
+      cart = "<div class='d-flex flex-column cart' id='cart'>"
+      cart += "<button class='btn btn-outline-info buttons' onclick='addToCart(this)' id='" + product[0] + "'><i class='fa fa-shopping-cart trash'></i>Add to cart</div>"
       productList = opening + photo + description + cart
       return productList
     }
@@ -291,7 +292,7 @@ Buy
 				type: "get",
 				async: false,
 				success: function (data) {
-          console.log(data)
+          window.location.reload(false)
 				}
 			})
     }

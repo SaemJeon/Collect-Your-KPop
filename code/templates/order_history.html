@@ -1,0 +1,273 @@
+<!-- Saem Jeon, sj846@drexel.edu
+CS530: DUI, Project 1 -->
+
+{% extends 'base.html' %}
+{% set active = "Order History" %}
+
+{% block title %}
+Order History
+{% endblock %}
+
+{% block content %}
+
+<section class="jumbotron">
+	<div>
+		<h1 class="jumbotron-heading">Order History</h1>
+		<div class="column" id="product_list"></div>
+    <nav>
+      <ul id="paginator" class="pagination justify-content-center pagelink-style">
+      </ul>
+    </nav>
+  </div>
+  <script>
+    var groups, albums, members, products
+    var currentPage = 1;
+    const productPerPage = 4;
+    var numOfPages = 1;
+    var pageList = new Array();
+
+    // Load product listing
+    function loadProducts() {
+      if (products) {
+        numOfPages = Math.ceil(Object.keys(products).length / productPerPage);
+        var begin = ((currentPage - 1) * productPerPage)
+        var end = begin + productPerPage
+        pageList = []
+        if (end > Object.keys(products).length) {
+          end = Object.keys(products).length
+        }
+
+        for (i = begin + 1; i < end + 1; i++) {
+          pageList.push(products[i])
+        }
+
+        createProductList()
+        createPageLink()
+      } else {
+        $("#product_list").empty()
+        $("#product_list").append("<h5>Start selling your collection you don't need anymore!</h5>")
+      }
+    }
+
+    // Get group dropdown list
+    function get_groups() {
+      var groups = null;
+			$.ajax({
+				url: "/api/get_groups",
+				type: "get",
+				async: false,
+				success: function (data) {
+					$('#artist').empty();
+					var group_list = $("#artist")
+          group_list.append($("<option></option>"))
+					$.each(data, function (key, value) {
+						group_list
+							.append($("<option></option>")
+								.attr("value", value[0])
+								.text(value[1]));
+					});
+          groups = data;
+				}
+			})
+      return groups
+		}
+
+    // Get member dropdown list
+    function get_members() {
+			var group_id = $("#artist").val()
+			$.get("/api/get_members/" + String(group_id), function (members) {
+				$("#members").empty()
+				var member_list = $("#members")
+        member_list.append($("<option></option>"))
+				$.each(members, function (key, value) {
+					member_list
+						.append($("<option></option>")
+							.attr("value", value[0])
+							.text(value[1]));
+				});
+			});;
+		}
+
+    // Get album dropdown list
+		function get_albums_list() {
+			var group_id = $("#artist").val()
+			$.ajax({
+				url: "/api/get_albums/" + String(group_id),
+				type: "get",
+				async: false,
+				success: function (data) {
+					var i;
+					var row = "";
+					$("#albums").empty()
+					var album = $("#albums")
+          album.append($("<option></option>"))
+					$.each(data, function (key, value) {
+						album
+							.append($("<option></option>")
+								.attr("value", value[2])
+								.text(value[3]));
+					});
+				}
+			})
+		}
+
+    // Get all the albums
+    function get_all_albums() {
+      var albums = null;
+      $.ajax({
+        url: "/api/get_all_albums",
+        type: "get",
+        async: false,
+        success: function (data) {
+          albums = data;
+        }
+      })
+      return albums
+    }
+
+    // Get all the members
+    function get_all_members() {
+      var members = null;
+      $.ajax({
+        url: "/api/get_all_members",
+        type: "get",
+        async: false,
+        success: function (data) {
+          members = data;
+        }
+      })
+      return members
+    }
+
+    // Get all products
+    function get_products(groups, albums, members) {
+      var products = null;
+			$.ajax({
+				url: "/api/get_order_history",
+				type: "get",
+				async: false,
+				success: function (data) {
+          products = data
+				}
+			})
+      return products
+		}
+
+    // Create product listing
+    function createProductList() {
+      $("#product_list").empty()
+      for (i=0; i < pageList.length; i++) {
+        $("#product_list").append(buildProductList(pageList[i]))
+      }
+      
+    }
+
+    // Build product list row
+    function buildProductList(product) {
+      var i, photo, description, opening, productList, sold;
+      opening = "<div class='product-list row' id='productRow'>"
+      ending = "</div>"
+      description = "<div class='d-flex flex-column product-description col-7'>"
+      if (product[3] == "1") {
+        photo = "<div class='product-pic'><img class='product-album' src='img/albums/" + product[2] + "/" + product[4] + ".jpg'/></div>"
+        description += "<p>Album</p>"
+        description += "<p class='product-bold'>" + groups[product[2]-1][1] + ": " + albums[product[2]][product[4]-1][2] +  "</p>"
+        description += "<p>$" + product[10] + "</p>"
+      } else {
+        photo = "<div class='product-pic'><img class='product-photo' src='img/photocards/" + product[2] + "/" + product[5] + "_" + product[4] + ".jpg'/></div>"
+        description += "<p>Photo Card</p>"
+        description += "<p class='product-bold'>" + groups[product[2]-1][1] + " " + members[product[5]][0][1] + ": " + albums[product[2]][product[4]-1][2] +  "</p>"
+        description += "<p>$" + product[10] + "</p>"
+      }
+
+      if (product[6] == "1") {
+        description += "<p>Pick-up</p>"
+        description += "<p>Within " + product[8] + " miles of " + product[7] + "</p>" + ending
+      } else if (product[6] == "2") {
+        description += "<p>Free shipping</p>" + ending
+      } else {
+        description += "<p>+$" + product[9] +" shipping</p>" + ending
+      }
+
+      sold = "<div class='column col-2 sold-confirm'>"
+			if (product[12] == "0") {
+				sold += "<button class='btn btn-outline-info' id='" + product[0] + "' onclick='confirmOrder(this)'>Confirm</button>"
+			} else {
+				sold += "<p>Your order has been confirmed.</p>"
+			}
+
+      productList = opening + photo + description + sold + ending
+      return productList
+    }
+
+    // Create pagination link
+    function createPageLink() {
+      $("#paginator").empty().append(createPage("<<", currentPage - 1, false, currentPage == 1))
+      for (i = 1; i < numOfPages + 1; i++) {
+        $("#paginator").append(createPage(i, i, currentPage == i, false))
+      }
+      $("#paginator").append(createPage(">>", currentPage + 1, false, currentPage == numOfPages))
+    }
+
+    // Create page
+    function createPage(text, toPage, on, off) {
+      var link = $("<li>").addClass("page-item").append(
+        $("<a>").addClass("page-link").text(text).click(function () {
+          currentPage = toPage;
+          loadProducts()
+        })
+      )
+      if (on) {
+        link.addClass('active');
+      }
+      if (off) {
+        link.addClass('disabled')
+      }
+      return link
+    }
+
+    // Show options depending on artist and type choices
+    function showOptions() {
+      var artist = $("#artist").val()
+			var type = $("#type").val()
+      if (artist == "") {
+        $("#albums").empty().append($("<option></option>"))
+        $("#members").empty().append($("<option></option>"))
+      } else {
+        if (type == "1") {
+				$("#member_row").hide();
+				get_albums_list()
+			} else if (type == "2") {
+				$("#member_row").show();
+				get_albums_list()
+				get_members()
+			}
+      }
+		}
+
+		function confirmOrder(obj) {
+			var product_id = obj.id
+			$.ajax({
+				url: "/api/confirm_order/" + String(product_id),
+				type: "get",
+				async: false,
+				success: function (data) {
+          window.location.reload(false)
+				}
+			})
+		}
+
+    $(function () {
+      products = get_products()
+      groups = get_groups()
+      albums = get_all_albums()
+      members = get_all_members()
+      loadProducts()
+      showOptions()
+      $("#artist").change(showOptions)
+      $("#type").change(showOptions)
+    });
+  </script>
+</section>
+
+{% endblock %}

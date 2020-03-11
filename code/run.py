@@ -138,25 +138,30 @@ def sell():
 		if sell_type == "1":
 			if delivery == "1":
 				if artist and album and zipcode and distance and price:
-					get_db().addProduct(user['user_id'], artist, sell_type, album, None, delivery, zipcode, distance, None, price, 0)
+					get_db().addProduct(user['user_id'], artist, sell_type, album, None, delivery, zipcode, distance, None, price, 0, 0)
 			elif delivery == "2":
 				if artist and album and price:
-					get_db().addProduct(user['user_id'], artist, sell_type, album, None, delivery, None, None, None, price, 0)
+					get_db().addProduct(user['user_id'], artist, sell_type, album, None, delivery, None, None, None, price, 0, 0)
 			else:
 				if artist and album and fee and price:
-					get_db().addProduct(user['user_id'], artist, sell_type, album, None, delivery, None, None, fee, price, 0)
+					get_db().addProduct(user['user_id'], artist, sell_type, album, None, delivery, None, None, fee, price, 0, 0)
 		else:
 			if delivery == "1":
 				if artist and member and zipcode and distance and price:
-					get_db().addProduct(user['user_id'], artist, sell_type, album, member, delivery, zipcode, distance, None, price, 0)
+					get_db().addProduct(user['user_id'], artist, sell_type, album, member, delivery, zipcode, distance, None, price, 0, 0)
 			elif delivery == "2":
 				if artist and member and price:
-					get_db().addProduct(user['user_id'], artist, sell_type, album, member, delivery, None, None, None, price, 0)
+					get_db().addProduct(user['user_id'], artist, sell_type, album, member, delivery, None, None, None, price, 0, 0)
 			else:
 				if artist and member and fee and price:
-					get_db().addProduct(user['user_id'], artist, sell_type, album, member, delivery, None, None, fee, price, 0)
+					get_db().addProduct(user['user_id'], artist, sell_type, album, member, delivery, None, None, fee, price, 0, 0)
 		return redirect('my_collection')
 	return render_template('sell.html')
+
+# Handle Shopping Cart page
+@app.route('/cart', methods=['GET', 'POST'])
+def cart():
+	return render_template('cart.html')
 
 # Handle any files that begin "/course" by loading from the course directory
 @app.route('/course/<path:path>')
@@ -258,6 +263,42 @@ def api_add_to_cart(product_id):
 	user = session['user']
 	get_db().addToCart(user['user_id'], product_id)
 	return "Sucess"
+
+@app.route('/api/get_shopping_cart')
+def api_shopping_cart():
+	user = session['user']
+	products = get_db().getShoppingCart(user['user_id'])
+	return products
+
+@app.route('/api/get_selling')
+def api_get_selling():
+	user = session['user']
+	products = get_db().getMySelling(user['user_id'])
+	return products
+
+@app.route('/api/remove_cart/<int:product_id>')
+def api_remove_cart(product_id):
+	user = session['user']
+	get_db().removeFromCart(user['user_id'], product_id)
+	return "Success"
+
+@app.route('/api/buy_product/<int:product_id>')
+def api_buy_product(product_id):
+	user = session['user']
+	get_db().buyProduct(user['user_id'], product_id)
+	return "Success"
+
+@app.route('/api/get_order_history')
+def api_order_history():
+	user = session['user']
+	products = get_db().getOrderHistory(user['user_id'])
+	return products
+
+@app.route('/api/confirm_order/<int:product_id>')
+def api_confirm_order(product_id):
+	user = session['user']
+	get_db().confirmOrder(user['user_id'], product_id)
+	return "Success"
 
 if __name__ == "__main__":
 	app.run(host='127.0.0.1', port=8080, debug=True)
