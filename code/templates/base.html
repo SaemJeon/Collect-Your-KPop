@@ -9,6 +9,8 @@ CS530: DUI, Assignment 1 -->
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
+	<link rel="icon" type="image/png" href="img/logo.png"/>
+
 	<link href="/course/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 	<link href="/css/main.css" rel="stylesheet" />
 	<link href="/course/lib/fontawesome/css/all.css" rel="stylesheet" />
@@ -36,13 +38,25 @@ CS530: DUI, Assignment 1 -->
 						<div class="collapse navbar-collapse" id="navbarSupportedContent">
 							<ul class="navbar-nav mr-auto">
 								<li class="nav-item{% if active == 'My Collection' %} active{% endif %}">
+									{% if session['user'] %}
 									<a class="nav-link" href="/my_collection">My Collection</a>
+									{% else %}
+									<a class="nav-link" href="/login">My Collection</a>
+									{% endif %}
 								</li>
 								<li class="nav-item{% if active == 'Buy' %} active{% endif %}">
+									{% if session['user'] %}
 									<a class="nav-link" href="/buy">Buy</a>
+									{% else %}
+									<a class="nav-link" href="/login">Buy</a>
+									{% endif %}
 								</li>
 								<li class="nav-item{% if active == 'Sell' %} active{% endif %}">
+									{% if session['user'] %}
 									<a class="nav-link" href="/sell">Sell</a>
+									{% else %}
+									<a class="nav-link" href="/login">Sell</a>
+									{% endif %}
 								</li>
 							</ul>
 							{% if session['user'] %}

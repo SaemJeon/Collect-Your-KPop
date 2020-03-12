@@ -160,7 +160,6 @@ class Database:
 	
 	def getAlbums(self, user_id, group_id):
 		data = self.select('SELECT * from user_albums WHERE user_id=? and group_id=?', [user_id, group_id])
-		print(data)
 		if data:
 			albums = {}
 			for i in range(len(data)):
@@ -226,9 +225,13 @@ class Database:
 		return field_name + " = " + str(field_value) if field_value else "(" + field_name + " is null or " + field_name + " like '%')"
 	
 	def addToCart(self, user_id, product_id):
-		data = self.select('SELECT * FROM cart WHERE user_id=? and product_id = ?', [user_id, product_id])
-		if not data:
-			self.execute('INSERT INTO cart (user_id, product_id) VALUES (?, ?)', [user_id, product_id])
+		seller_id = self.select('SELECT user_id FROM products WHERE product_id=?', [product_id])
+		if str(user_id) != str(seller_id[0][0]):
+			data = self.select('SELECT * FROM cart WHERE user_id=? and product_id = ?', [user_id, product_id])
+			if not data:
+				self.execute('INSERT INTO cart (user_id, product_id) VALUES (?, ?)', [user_id, product_id])
+				return "Added"
+		return "It is on your selling list."
 	
 	def getShoppingCart(self, user_id):
 		data = self.select("SELECT * FROM products WHERE product_id IN (SELECT product_id FROM cart WHERE user_id=?) and sold=0", [user_id])
