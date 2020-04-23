@@ -1,5 +1,5 @@
 # Collect Your KPop
-Collect Your Kpop is a web platform where Kpop fans can buy and sell goods collections of thier favorite KPop artists. Also, the users can keep track of how many albums and photo cards they have collected for their favorite artists and members.
+Collect Your Kpop is a web platform where Kpop fans can buy and sell goods collections of their favorite KPop artists. Also, the users can keep track of how many albums and photo cards they have collected for their favorite artists and members.
 
 ## Getting Started
 ### Prerequisites
